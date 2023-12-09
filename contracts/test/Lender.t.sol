@@ -48,7 +48,7 @@ contract LenderTest is Test, IERC721Receiver {
             address(famcnft), 0, 1, 1, 1
         );
         assertEq(lender.lastOfferId(), 1);
-        lender.acceptOffer(1);
+        lender.acceptOffer(0);
         // assertEq(lender.offers[offerId].active, false);
     }
 
@@ -56,18 +56,18 @@ contract LenderTest is Test, IERC721Receiver {
         lender.createOffer(
             address(famcnft), 0, 1, 1, 1
         );
-        lender.acceptOffer(1);
-        lender.repayLoan(1);
+        lender.acceptOffer(0);
+        lender.repayLoan(0);
     }
 
     function test_claimNft() public {
         lender.createOffer(
             address(famcnft), 0, 1, 1, 1
         );
-        lender.acceptOffer(1);
+        lender.acceptOffer(0);
         // Immediately... should fail
         vm.expectRevert("Loan has not expired");
-        lender.claimNFT(1);
+        lender.claimNFT(0);
         // Advance block time
     }
 
@@ -91,17 +91,17 @@ contract LenderTest is Test, IERC721Receiver {
             10000     // amount of FHD in
         );
         // We need to accept it for it to become a loan
-        lender.acceptOffer(1);
+        lender.acceptOffer(0);
         uint256 startTime = 0;
         uint256 endTime = startTime + 44000; // 1 day in seconds (86400)
-        uint256 interest = lender.getInterest(1, startTime, endTime);
+        uint256 interest = lender.getInterest(0, startTime, endTime);
         // This console logsLender.Offer memory off = lender.getOffer(1); // console logs the structure
-        emit InterestCalculation(1, startTime, endTime, interest);
+        emit InterestCalculation(0, startTime, endTime, interest);
     }
 
-    function test_tokenURI() public {
+    function test_tokenURI() public view {
         string memory uri = famcnft.tokenURI(0);
-        // console2.log("URI: %s", uri);
+        console2.log("URI: %s", uri);
     }
 
     function onERC721Received(
