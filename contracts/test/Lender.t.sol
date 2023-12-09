@@ -6,6 +6,8 @@ import {Lender} from "../src/Lender.sol";
 import {TestERC20} from "../src/test/TestERC20.sol";
 import {Famcnft} from "../src/Famcnft.sol";
 import {IERC721Receiver} from "../src/test/IERC721Receiver.sol";
+// error ERC20InvalidSender(address sender);
+
 
 contract LenderTest is Test, IERC721Receiver {
     Lender public lender;
@@ -59,6 +61,23 @@ contract LenderTest is Test, IERC721Receiver {
         vm.expectRevert("Loan has not expired");
         lender.claimNFT(1);
         // Advance block time
+    }
+
+    function test_setMapping() public {
+        lender.createOffer(
+            address(famcnft), 0, 1, 1, 1
+        );
+        lender.setMapping(address(famcnft), 0);
+    }
+
+    function test_getOffersByNft() public {
+        lender.createOffer(
+            address(famcnft), 0, 3, 2, 1
+        );
+        lender.createOffer(
+            address(famcnft), 0, 6, 5, 4
+        );
+        Offer memory offer = lender.getOffersByNft(address(famcnft), 0);
     }
 
     function onERC721Received(

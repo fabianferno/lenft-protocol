@@ -32,6 +32,7 @@ contract Lender {
 
     mapping(uint256 => Offer) public offers;
     mapping(address => mapping (uint256 => Offer[])) public offersByNft;
+    // Typical: mapping (address => mapping (address => uint256)) approvals;
 
     constructor(address _token) {
         token = _token;
@@ -67,8 +68,17 @@ contract Lender {
             endTime: 0,
             active: true
         });
-        // offersByNft[_nftContract][_tokenId].push(offers[offerId]);
-        // offersByNft[string.concat(_nftContract, _tokenId.toString())].push(offers[offerId]);
+        offersByNft[_nftContract][_tokenId].push(offers[offerId]);
+    }
+
+    function setMapping(address _nftContract, uint256 _tokenId) public {
+        Offer memory offer = offers[lastOfferId];
+        offersByNft[_nftContract][_tokenId].push(offer);
+        Offer[] memory offers = offersByNft[_nftContract][_tokenId];
+        for (uint i = 0; i < offers.length; i++) {
+            Offer memory offer = offers[i];
+            require(offer.active == true, "Offer is not active");
+        }
     }
 
     function listNft(address _nftContract, uint256 _tokenId) public {
@@ -137,8 +147,8 @@ contract Lender {
         return offers[_offerId];
     }
 
-    function getOffersByTokenId(uint256 _tokenId) public view returns (Offer[] memory) {
-        return offersByNft[offers[_tokenId].nftContract][_tokenId];
+    function getOffersByNft(address _nftContract, uint256 _tokenId) public view returns (Offer[] memory) {
+        return offersByNft[_nftContract][_tokenId];
     }
 
 }
