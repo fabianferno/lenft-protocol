@@ -23,6 +23,10 @@ contract Famcnft is ERC721('FastApeMotoClub', 'FAMC') {
         }
     }
 
+    function _baseURI() internal view override virtual returns (string memory) {
+        return "https://api.decentraland.org/v2/contracts/0xf87e31492faf9a91b02ee0deaad50d51d56d5d4d/tokens/";
+    }
+
     function mint(address to) public {
         require(msg.sender==_owner);
         _safeMint(to, _tokenId++);

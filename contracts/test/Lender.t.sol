@@ -99,6 +99,11 @@ contract LenderTest is Test, IERC721Receiver {
         emit InterestCalculation(1, startTime, endTime, interest);
     }
 
+    function test_tokenURI() public {
+        string memory uri = famcnft.tokenURI(0);
+        // console2.log("URI: %s", uri);
+    }
+
     function onERC721Received(
         address operator,
         address from,
