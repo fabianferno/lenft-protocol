@@ -60,8 +60,7 @@ contract Lender {
         require(_amount <= IERC20(token).balanceOf(msg.sender), "Insufficient balance");
         IERC20(token).transferFrom(msg.sender, address(this), _amount);
 
-        lastOfferId = lastOfferId + 1;
-        uint256 offerId = lastOfferId;
+        uint256 offerId = lastOfferId++;
 
         offers[offerId] = Offer({
             nftContract: _nftContract,
