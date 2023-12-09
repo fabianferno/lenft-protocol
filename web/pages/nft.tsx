@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useAccount } from "wagmi";
-import Layout from "@/web/components/layout";
+import Layout from "@/components/layout";
 import { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";

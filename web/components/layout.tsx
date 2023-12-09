@@ -1,17 +1,29 @@
 import React, { ReactNode, useState } from "react";
 import Image from "next/image";
+import { Fragment } from "react";
 import { Disclosure, Menu, Transition, Dialog } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
-import { HomeIcon, RocketLaunchIcon } from "@heroicons/react/24/outline";
+import {
+  HomeIcon,
+  RocketLaunchIcon,
+  DocumentPlusIcon,
+  PresentationChartLineIcon,
+} from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
 const navigation = [
   { name: "Home", href: "/home", icon: HomeIcon, current: true },
+  {
+    name: "NFT",
+    href: "/nft",
+    icon: DocumentPlusIcon,
+    current: false,
+  },
   {
     name: "My NFTs",
     href: "/my-nfts",
