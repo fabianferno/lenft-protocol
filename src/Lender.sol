@@ -70,6 +70,12 @@ contract Lender {
         // offersByNft[string.concat(_nftContract, _tokenId.toString())].push(offers[offerId]);
     }
 
+    function listNft(address _nftContract, uint256 _tokenId) public {
+        require(IERC721(_nftContract).ownerOf(_tokenId) == msg.sender, "You do not own this NFT");
+        IERC721(_nftContract).approve(address(this), _tokenId);
+        IERC721(_nftContract).transferFrom(msg.sender, address(this), _tokenId);
+    }
+
     function acceptOffer(uint256 _offerId) public {
         require(offers[_offerId].active == true, "Offer does not exist");
         require(offers[_offerId].borrower == address(0), "Offer already accepted");
