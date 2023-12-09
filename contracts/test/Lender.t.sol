@@ -63,13 +63,6 @@ contract LenderTest is Test, IERC721Receiver {
         // Advance block time
     }
 
-    function test_setMapping() public {
-        lender.createOffer(
-            address(famcnft), 0, 1, 1, 1
-        );
-        lender.setMapping(address(famcnft), 0);
-    }
-
     function test_getOffersByNft() public {
         lender.createOffer(
             address(famcnft), 0, 3, 2, 1
@@ -77,7 +70,7 @@ contract LenderTest is Test, IERC721Receiver {
         lender.createOffer(
             address(famcnft), 0, 6, 5, 4
         );
-        Offer memory offer = lender.getOffersByNft(address(famcnft), 0);
+        Lender.Offer[] memory offer = lender.getOffersByNft(address(famcnft), 0);
     }
 
     function onERC721Received(

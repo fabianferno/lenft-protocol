@@ -44,7 +44,7 @@ contract Lender {
         uint256 _interestRate,
         uint256 _duration,
         uint256 _amount
-    ) public {
+    ) public returns (uint256) {
         require(_interestRate > 0, "Interest rate must be greater than 0");
         require(_duration > 0, "Duration must be greater than 0");
         require(_amount > 0, "Amount must be greater than 0");
@@ -69,16 +69,7 @@ contract Lender {
             active: true
         });
         offersByNft[_nftContract][_tokenId].push(offers[offerId]);
-    }
-
-    function setMapping(address _nftContract, uint256 _tokenId) public {
-        Offer memory offer = offers[lastOfferId];
-        offersByNft[_nftContract][_tokenId].push(offer);
-        Offer[] memory offers = offersByNft[_nftContract][_tokenId];
-        for (uint i = 0; i < offers.length; i++) {
-            Offer memory offer = offers[i];
-            require(offer.active == true, "Offer is not active");
-        }
+        return offerId;
     }
 
     function listNft(address _nftContract, uint256 _tokenId) public {
