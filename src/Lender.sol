@@ -28,10 +28,14 @@ contract Lender {
     // testnet: 0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96
     address public token = 0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96;
 
-    uint256 private lastOfferId = 0;
+    uint256 public lastOfferId = 0;
 
     mapping(uint256 => Offer) public offers;
     mapping(address => mapping (uint256 => Offer[])) public offersByNft;
+
+    constructor(address _token) {
+        token = _token;
+    }
 
     function createOffer(
         address _nftContract,
@@ -60,13 +64,14 @@ contract Lender {
             endTime: 0,
             active: true
         });
-        offersByNft[_nftContract][_tokenId].push(offers[offerId]);
+        // offersByNft[_nftContract][_tokenId].push(offers[offerId]);
+        // offersByNft[string.concat(_nftContract, _tokenId.toString())].push(offers[offerId]);
     }
 
     function acceptOffer(uint256 _offerId) public {
         require(offers[_offerId].active == true, "Offer does not exist");
         require(offers[_offerId].borrower == address(0), "Offer already accepted");
-        require(offers[_offerId].lender != msg.sender, "You cannot accept your own offer");
+        // require(offers[_offerId].lender != msg.sender, "You cannot accept your own offer");
         address _nftContract = offers[_offerId].nftContract;
         uint256 _tokenId = offers[_offerId].tokenId;
         require(IERC721(_nftContract).ownerOf(_tokenId) == msg.sender, "You do not own this NFT");
