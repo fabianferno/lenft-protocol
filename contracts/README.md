@@ -7,6 +7,7 @@ Lender can:
   * call claimNFT (only when/if a loan expires)
 
 Borrower flow:
+  * call listNft to list an NFT on the platform
   * call acceptOffer to accept an offer
   * call repayLoan to repay a loan
 
