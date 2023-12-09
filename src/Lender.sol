@@ -28,7 +28,7 @@ contract Lender {
     // testnet: 0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96
     address public token = 0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96;
 
-    uint256 public lastOfferId = 0;
+    uint256 public lastOfferId;
 
     mapping(uint256 => Offer) public offers;
     mapping(address => mapping (uint256 => Offer[])) public offersByNft;
@@ -51,7 +51,9 @@ contract Lender {
         require(_amount <= IERC20(token).balanceOf(msg.sender), "Insufficient balance");
         IERC20(token).transferFrom(msg.sender, address(this), _amount);
 
-        uint offerId = lastOfferId++;
+        lastOfferId = lastOfferId + 1;
+        uint256 offerId = lastOfferId;
+        
         offers[offerId] = Offer({
             nftContract: _nftContract,
             tokenId: _tokenId,
@@ -74,14 +76,14 @@ contract Lender {
         // require(offers[_offerId].lender != msg.sender, "You cannot accept your own offer");
         address _nftContract = offers[_offerId].nftContract;
         uint256 _tokenId = offers[_offerId].tokenId;
+
         require(IERC721(_nftContract).ownerOf(_tokenId) == msg.sender, "You do not own this NFT");
 
         offers[_offerId].borrower = msg.sender;
         offers[_offerId].startTime = block.timestamp;
         offers[_offerId].endTime = block.timestamp + offers[_offerId].duration;
 
-        // approve first?
-        // IERC721(_nftContract).approve(address(this), _tokenId);
+        IERC721(_nftContract).approve(address(this), _tokenId);
 
         IERC721(_nftContract).transferFrom(msg.sender, address(this), _tokenId);
         IERC20(token).transferFrom(address(this), msg.sender, offers[_offerId].amount);
