@@ -131,12 +131,9 @@ export default function NFT() {
                   </div>
                 </div>
                 <div className="flex gap-x-3">
-                  <button
-                    type="button"
-                    className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                  >
-                    Zora
-                  </button>
+                  <div className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                    NFT
+                  </div>
                   <button
                     type="button"
                     className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
@@ -155,8 +152,11 @@ export default function NFT() {
                 <div className="font-medium text-lg text-gray-600">
                   {collection?.token?.data[0]?.NFTName}
                 </div>
-                <div className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                  Deadline: {new Date().toDateString()}
+                <div className="rounded-md text-end bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                  Last updated{" "}
+                  {new Date(
+                    collection?.token?.data[0]?.updatedAt
+                  ).toLocaleDateString()}
                 </div>
               </div>
 
@@ -169,42 +169,34 @@ export default function NFT() {
                 </p>
               </div>
 
-              <div className="mt-5">
-                <div className="relative flex items-start justify-between">
-                  <div className="text-sm leading-6 font-medium text-gray-900">
-                    Only holders can attest
-                  </div>
-                  <div className="flex h-6 items-center">
-                    <input
-                      id="comments"
-                      aria-describedby="comments-description"
-                      name="comments"
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-sky-600 focus:ring-sky-600"
-                    />
-                  </div>
-                </div>
-              </div>
-
               <div className="mt-8 bg-sky-50 sm:rounded-lg">
                 <div className="px-4 py-5 sm:p-6 sm:py-14">
                   <div className="mt-2 w-full pt-0.5 bg-gray-300" />
                   <div className="mt-3 relative flex items-start justify-between">
-                    <div className="text-sm leading-6 font-medium text-gray-900">
-                      0.000877 ETH
+                    <div className="text-3xl  leading-6 font-bold text-gray-900">
+                      {
+                        collection?.token?.data[0]?.tokenowners_list[0]
+                          ?.NFTPrice
+                      }{" "}
+                      {
+                        collection?.token?.data[0]?.tokenowners_list[0]
+                          ?.CoinName
+                      }
                     </div>
-                    <div className="h-6 text-sky-600 text-sm">Now Minting</div>
+                    <div className="h-6 text-sky-600 text-sm">
+                      Last updated price
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Claim Funds Button */}
-              <div className="mt-8 flex justify-between items-center">
+              <div className="mt-8 flex justify-center items-center">
                 <button
                   type="button"
-                  className="flex items-center rounded-lg bg-sky-600 px-10 py-5 text-2xl   font-semibold text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-black disabled:bg-slate-500 disabled:hover:text-gray-100"
+                  className="flex items-center rounded-lg w-full bg-sky-600 px-10 py-5 text-2xl text-center  font-semibold text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-black disabled:bg-slate-500 disabled:hover:text-gray-100"
                 >
-                  Get a loan for your NFT
+                  Get a loan against your NFT
                 </button>
               </div>
             </div>
@@ -261,13 +253,20 @@ export default function NFT() {
                 </tr>
                 <tr>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">Value 4</div>
+                    <div className="text-sm text-gray-900">
+                      0xa9shdapsnapuijsnauisnbnausixaji
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">Value 5</div>
+                    <div className="text-sm text-gray-900">100 days</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">Value 6</div>
+                    <div className="text-sm text-gray-900">1000 XDC / 18%</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-md text-center text-white bg-sky-500 p-3 rounded-lg">
+                      Accept Offer
+                    </div>
                   </td>
                 </tr>
               </tbody>
