@@ -3,12 +3,12 @@ This is the set of smart contracts managing the Lenft lending protocol.
 The Lender contract caters to two actors.
 
 Lender can:
-  call createOffer to create an offer on a loan
-  call claimNFT (only when/if a loan expires)
+  * call createOffer to create an offer on a loan
+  * call claimNFT (only when/if a loan expires)
 
 Borrower flow:
-  call acceptOffer to accept an offer
-  call repayLoan to repay a loan
+  * call acceptOffer to accept an offer
+  * call repayLoan to repay a loan
 
 
 ## Usage
