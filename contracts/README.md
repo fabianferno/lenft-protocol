@@ -1,17 +1,15 @@
-## Foundry
+This is the set of smart contracts managing the Lenft lending protocol.
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+The Lender contract caters to two actors.
 
-Foundry consists of:
+Lender can:
+  call createOffer to create an offer on a loan
+  call claimNFT (only when/if a loan expires)
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+Borrower flow:
+  call acceptOffer to accept an offer
+  call repayLoan to repay a loan
 
-## Documentation
-
-https://book.getfoundry.sh/
 
 ## Usage
 
@@ -27,40 +25,6 @@ $ forge build
 $ forge test
 ```
 
-### Format
-
 ```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
+$ forge create Lender.sol --rpc-url <your_rpc_url> --private-key <your_private_key>
 ```
