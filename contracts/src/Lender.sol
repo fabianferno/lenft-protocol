@@ -16,7 +16,7 @@ contract Lender {
         address borrower;
         uint256 interestRate; // Should be in basis points. 1% = 100
         uint256 duration;     // In seconds
-        uint256 amount;       // In FHD (in wei)
+        uint256 amount;       // In FHD
         uint256 startTime;    // Unix timestamp in seconds
         uint256 endTime;      // Unix timestamp in seconds
         bool active;
@@ -102,9 +102,12 @@ contract Lender {
         // Block timestamps are in seconds.
         // Interest is per loan, not per annum. Early repayment means a lineraly proportional
         // reduction in total interest to be paid.
-        uint256 actualDuration = block.timestamp - offers[_offerId].startTime;
-        uint256 interestPerSecond = offers[_offerId].amount * offers[_offerId].interestRate / 100  / offers[_offerId].duration;
-        uint256 interest = actualDuration * interestPerSecond;
+        uint256 plannedDuration = offers[_offerId].duration;
+        uint256 principal = offers[_offerId].amount;
+        uint256 interestRate = offers[_offerId].interestRate;
+        uint256 interestPerSecond = principal * interestRate / plannedDuration;
+        uint256 actualDuration = endTime - startTime;
+        uint256 interest = actualDuration * interestPerSecond / uint256(10000);
 
         require(IERC20(token).balanceOf(msg.sender) >= offers[_offerId].amount + interest, "Insufficient balance");
         IERC20(token).transferFrom(msg.sender, offers[_offerId].lender, offers[_offerId].amount + interest);
@@ -145,10 +148,13 @@ contract Lender {
         return offersByNft[_nftContract][_tokenId];
     }
 
-    function getInterest(uint256 _offerId, uint256 timestamp) public view returns (uint256) {
-        uint256 actualDuration = timestamp - offers[_offerId].startTime;
-        uint256 interestPerSecond = offers[_offerId].amount * offers[_offerId].interestRate / 100  / offers[_offerId].duration;
+    function getInterest(uint256 _offerId, uint256 startTime, uint256 endTime) public view returns (uint256) {
+        uint256 plannedDuration = offers[_offerId].duration;
+        uint256 principal = offers[_offerId].amount;
+        uint256 interestRate = offers[_offerId].interestRate;
+        uint256 interestPerSecond = principal * interestRate / plannedDuration;
+        uint256 actualDuration = endTime - startTime;
         uint256 interest = actualDuration * interestPerSecond;
-        return interest;
+        return interest / uint256(10000);
     }
 }

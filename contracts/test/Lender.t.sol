@@ -12,12 +12,13 @@ contract LenderTest is Test, IERC721Receiver {
     Lender public lender;
     TestERC20 public fhdToken;
     Famcnft public famcnft; // FastApeMotoClub, our ERC721
-    event InterestCalculation(uint256 amount, uint256 interest);
+    event InterestCalculation(uint256 offerId, uint256 startTime, uint256 endTime, uint256 interest);
 
     function setUp() public {
-        fhdToken = new TestERC20(987678);
+        fhdToken = new TestERC20(100000);
         lender = new Lender(address(fhdToken));
-        fhdToken.approve(address(lender), 8888);
+        fhdToken.approve(address(lender), 100000);
+
         famcnft = new Famcnft();
         famcnft.approve(address(lender), 0);
     }
@@ -78,15 +79,17 @@ contract LenderTest is Test, IERC721Receiver {
         lender.createOffer(
             address(famcnft), 
             0, 
-            3, // In BPS. 0.03% interest
-            2, // duration in secods
-            1  // amount of FHD in wei
+            3000,     // In BPS. 30% interest
+            86400,    // duration in seconds
+            10000     // amount of FHD in
         );
-        lender.createOffer(
-            address(famcnft), 0, 6, 5, 4
-        );
-        uint256 interest = lender.getInterest(1, block.timestamp + 1000);
-        emit InterestCalculation(1, interest);
+        // We need to accept it for it to become a loan
+        lender.acceptOffer(1);
+        uint256 startTime = 0;
+        uint256 endTime = startTime + 44000; // 1 day in seconds (86400)
+        uint256 interest = lender.getInterest(1, startTime, endTime);
+        // This console logsLender.Offer memory off = lender.getOffer(1); // console logs the structure
+        emit InterestCalculation(1, startTime, endTime, interest);
     }
 
     function onERC721Received(
