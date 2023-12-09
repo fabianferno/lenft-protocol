@@ -23,6 +23,13 @@ contract LenderTest is Test, IERC721Receiver {
         famcnft.approve(address(lender), 0);
     }
 
+    function test_listNft() public {
+        uint listedNfts = lender.getListedNfts();
+        assertEq(listedNfts.length, 0);
+        lender.listNft(address(famcnft), 0);
+        assertEq(lender.listedNfts.length, 1);
+    }
+
     function test_createOffer() public {
         assertEq(lender.lastOfferId(), 0);
         lender.createOffer(

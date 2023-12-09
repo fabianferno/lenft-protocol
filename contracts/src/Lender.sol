@@ -26,13 +26,20 @@ contract Lender {
     // https://charts.fathom.fi/#/token/0x49d3f7543335cf38fa10889ccff10207e22110b5
     // mainnet: 0x49d3f7543335cf38fa10889ccff10207e22110b5
     // testnet: 0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96
+
+    struct NFT {
+        address nftContract;
+        uint256 tokenId;
+    }
+    NFT[] public listedNfts;
+
     address public token = 0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96;
 
     uint256 public lastOfferId;
 
     mapping(uint256 => Offer) public offers;
     mapping(address => mapping (uint256 => Offer[])) public offersByNft;
-
+    
     constructor(address _token) {
         token = _token;
     }
@@ -73,8 +80,16 @@ contract Lender {
 
     function listNft(address _nftContract, uint256 _tokenId) public {
         require(IERC721(_nftContract).ownerOf(_tokenId) == msg.sender, "You do not own this NFT");
+        listedNfts.push(NFT({
+            nftContract: _nftContract,
+            tokenId: _tokenId
+        }));
         IERC721(_nftContract).approve(address(this), _tokenId);
         IERC721(_nftContract).transferFrom(msg.sender, address(this), _tokenId);
+    }
+
+    function getListedNfts() public view returns (NFT[] memory) {
+        return listedNfts;
     }
 
     function acceptOffer(uint256 _offerId) public {
@@ -106,7 +121,7 @@ contract Lender {
         uint256 principal = offers[_offerId].amount;
         uint256 interestRate = offers[_offerId].interestRate;
         uint256 interestPerSecond = principal * interestRate / plannedDuration;
-        uint256 actualDuration = endTime - startTime;
+        uint256 actualDuration = block.timestamp - offers[_offerId].startTime;
         uint256 interest = actualDuration * interestPerSecond / uint256(10000);
 
         require(IERC20(token).balanceOf(msg.sender) >= offers[_offerId].amount + interest, "Insufficient balance");
