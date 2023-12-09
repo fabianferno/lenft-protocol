@@ -2,9 +2,8 @@
 //
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.19;
 
-import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import "openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
 
@@ -23,13 +22,11 @@ contract Lender {
         bool active;
     }
 
-    // The token the loans have to be in
-    // Fathom Dollar as per https://charts.fathom.fi/#/token/0x49d3f7543335cf38fa10889ccff10207e22110b5
-    address public token = 0x49d3f7543335cf38Fa10889CCFF10207e22110B5;
-
-    constructor(address _token) {
-        token = _token;
-    }
+    // The token the loans have to be in Fathom Dollar (FHD)
+    // https://charts.fathom.fi/#/token/0x49d3f7543335cf38fa10889ccff10207e22110b5
+    // mainnet: 0x49d3f7543335cf38fa10889ccff10207e22110b5
+    // testnet: 0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96
+    address public token = 0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96;
 
     uint256 private lastOfferId = 0;
 
@@ -77,6 +74,9 @@ contract Lender {
         offers[_offerId].borrower = msg.sender;
         offers[_offerId].startTime = block.timestamp;
         offers[_offerId].endTime = block.timestamp + offers[_offerId].duration;
+
+        // approve first?
+        // IERC721(_nftContract).approve(address(this), _tokenId);
 
         IERC721(_nftContract).transferFrom(msg.sender, address(this), _tokenId);
         IERC20(token).transferFrom(address(this), msg.sender, offers[_offerId].amount);
