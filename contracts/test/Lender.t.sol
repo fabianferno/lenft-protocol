@@ -18,16 +18,16 @@ contract LenderTest is Test, IERC721Receiver {
         fhdToken = new TestERC20(100000);
         lender = new Lender(address(fhdToken));
         fhdToken.approve(address(lender), 100000);
-
         famcnft = new Famcnft();
         famcnft.approve(address(lender), 0);
     }
 
     function test_listNft() public {
-        uint listedNfts = lender.getListedNfts();
+        Lender.NFT[] memory listedNfts = lender.getListedNfts();
         assertEq(listedNfts.length, 0);
         lender.listNft(address(famcnft), 0);
-        assertEq(lender.listedNfts.length, 1);
+        listedNfts = lender.getListedNfts();
+        assertEq(listedNfts.length, 1);
     }
 
     function test_createOffer() public {
@@ -104,7 +104,7 @@ contract LenderTest is Test, IERC721Receiver {
         address from,
         uint256 tokenId,
         bytes calldata data
-    ) external returns (bytes4) {
+    ) external pure returns (bytes4) {
         operator = operator;
         from = from;
         tokenId = tokenId;

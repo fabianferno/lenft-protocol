@@ -30,6 +30,7 @@ contract Lender {
     struct NFT {
         address nftContract;
         uint256 tokenId;
+        bool listed;
     }
     NFT[] public listedNfts;
 
@@ -82,14 +83,23 @@ contract Lender {
         require(IERC721(_nftContract).ownerOf(_tokenId) == msg.sender, "You do not own this NFT");
         listedNfts.push(NFT({
             nftContract: _nftContract,
-            tokenId: _tokenId
+            tokenId: _tokenId,
+            listed: true
         }));
-        IERC721(_nftContract).approve(address(this), _tokenId);
         IERC721(_nftContract).transferFrom(msg.sender, address(this), _tokenId);
     }
 
     function getListedNfts() public view returns (NFT[] memory) {
         return listedNfts;
+    }
+
+    function delistNft(address _nftContract, uint256 _tokenId) private {
+        for (uint i = 0; i < listedNfts.length; i++) {
+            if (listedNfts[i].nftContract == _nftContract && listedNfts[i].tokenId == _tokenId) {
+                listedNfts[i].listed = false;
+                break;
+            }
+        }
     }
 
     function acceptOffer(uint256 _offerId) public {

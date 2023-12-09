@@ -17,7 +17,10 @@ contract Famcnft is ERC721('FastApeMotoClub', 'FAMC') {
 
     constructor () {
         _owner = msg.sender;
-        _safeMint(msg.sender, _tokenId++);
+        // mint five tokens
+        for (uint i=0; i<5; i++) {
+            _safeMint(msg.sender, _tokenId++);
+        }
     }
 
     function mint(address to) public {
