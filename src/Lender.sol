@@ -47,6 +47,7 @@ contract Lender {
         require(_interestRate > 0, "Interest rate must be greater than 0");
         require(_duration > 0, "Duration must be greater than 0");
         require(_amount > 0, "Amount must be greater than 0");
+        // Add: require that the NFT is listed
 
         require(_amount <= IERC20(token).balanceOf(msg.sender), "Insufficient balance");
         IERC20(token).transferFrom(msg.sender, address(this), _amount);
@@ -79,7 +80,6 @@ contract Lender {
     function acceptOffer(uint256 _offerId) public {
         require(offers[_offerId].active == true, "Offer does not exist");
         require(offers[_offerId].borrower == address(0), "Offer already accepted");
-        // require(offers[_offerId].lender != msg.sender, "You cannot accept your own offer");
         address _nftContract = offers[_offerId].nftContract;
         uint256 _tokenId = offers[_offerId].tokenId;
 
@@ -89,10 +89,8 @@ contract Lender {
         offers[_offerId].startTime = block.timestamp;
         offers[_offerId].endTime = block.timestamp + offers[_offerId].duration;
 
-        IERC721(_nftContract).approve(address(this), _tokenId);
-
         IERC721(_nftContract).transferFrom(msg.sender, address(this), _tokenId);
-        IERC20(token).transferFrom(address(this), msg.sender, offers[_offerId].amount);
+        IERC20(token).transfer(msg.sender, offers[_offerId].amount);
     }
 
     function repayLoan(uint256 _offerId) public {
