@@ -17,9 +17,9 @@ contract LenderTest is Test, IERC721Receiver {
     function setUp() public {
         fhdToken = new TestERC20(100000);
         lender = new Lender(address(fhdToken));
-        fhdToken.approve(address(lender), 100000);
+        fhdToken.approve(address(lender), 100000); // Manually in Metamask if not running via forge!
         famcnft = new Famcnft();
-        famcnft.approve(address(lender), 0);
+        famcnft.approve(address(lender), 0);       // Manually in Metamask if not running via forge!
     }
 
     function test_listNft() public {
