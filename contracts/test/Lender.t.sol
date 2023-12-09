@@ -19,7 +19,7 @@ contract LenderTest is Test, IERC721Receiver {
         lender = new Lender(address(fhdToken));
         fhdToken.approve(address(lender), 100000); // Manually in Metamask if not running via forge!
         famcnft = new Famcnft();
-        famcnft.approve(address(lender), 0);       // Manually in Metamask if not running via forge!
+        famcnft.setApprovalForAll(address(lender), true);       // Manually in Metamask if not running via forge!
     }
 
     function test_listNft() public {

@@ -142,6 +142,7 @@ contract Lender {
         IERC721(nft).transferFrom(address(this), msg.sender, tokenId);
 
         offers[_offerId].active = false;
+        delistNft(nft, tokenId);
     }
 
     function claimNFT(uint256 _offerId) public {
@@ -154,6 +155,7 @@ contract Lender {
         IERC721(nft).transferFrom(address(this), msg.sender, tokenId);
 
         offers[_offerId].active = false;
+        delistNft(offers[_offerId].nftContract, offers[_offerId].tokenId);
     }
 
     function cancelOffer(uint256 _offerId) public {
@@ -163,6 +165,7 @@ contract Lender {
         IERC20(token).transferFrom(address(this), msg.sender, offers[_offerId].amount);
 
         offers[_offerId].active = false;
+        delistNft(offers[_offerId].nftContract, offers[_offerId].tokenId);
     }
 
     function getOffer(uint256 _offerId) public view returns (Offer memory) {
