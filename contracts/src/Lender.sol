@@ -14,11 +14,11 @@ contract Lender {
         uint256 tokenId;
         address lender;
         address borrower;
-        uint256 interestRate;
-        uint256 duration;
-        uint256 amount;
-        uint256 startTime;
-        uint256 endTime;
+        uint256 interestRate; // Should be in basis points. 1% = 100
+        uint256 duration;     // In seconds
+        uint256 amount;       // In FHD (in wei)
+        uint256 startTime;    // Unix timestamp in seconds
+        uint256 endTime;      // Unix timestamp in seconds
         bool active;
     }
 
@@ -32,7 +32,6 @@ contract Lender {
 
     mapping(uint256 => Offer) public offers;
     mapping(address => mapping (uint256 => Offer[])) public offersByNft;
-    // Typical: mapping (address => mapping (address => uint256)) approvals;
 
     constructor(address _token) {
         token = _token;
@@ -55,7 +54,7 @@ contract Lender {
 
         lastOfferId = lastOfferId + 1;
         uint256 offerId = lastOfferId;
-        
+
         offers[offerId] = Offer({
             nftContract: _nftContract,
             tokenId: _tokenId,
@@ -100,8 +99,12 @@ contract Lender {
         require(offers[_offerId].endTime > block.timestamp, "Loan has expired");
 
         // Calculate interest based on how much time has passed
-        uint256 interest = offers[_offerId].amount
-            * offers[_offerId].interestRate * (block.timestamp - offers[_offerId].startTime) / 31536000000;
+        // Block timestamps are in seconds.
+        // Interest is per loan, not per annum. Early repayment means a lineraly proportional
+        // reduction in total interest to be paid.
+        uint256 actualDuration = block.timestamp - offers[_offerId].startTime;
+        uint256 interestPerSecond = offers[_offerId].amount * offers[_offerId].interestRate / 100  / offers[_offerId].duration;
+        uint256 interest = actualDuration * interestPerSecond;
 
         require(IERC20(token).balanceOf(msg.sender) >= offers[_offerId].amount + interest, "Insufficient balance");
         IERC20(token).transferFrom(msg.sender, offers[_offerId].lender, offers[_offerId].amount + interest);
@@ -142,4 +145,10 @@ contract Lender {
         return offersByNft[_nftContract][_tokenId];
     }
 
+    function getInterest(uint256 _offerId, uint256 timestamp) public view returns (uint256) {
+        uint256 actualDuration = timestamp - offers[_offerId].startTime;
+        uint256 interestPerSecond = offers[_offerId].amount * offers[_offerId].interestRate / 100  / offers[_offerId].duration;
+        uint256 interest = actualDuration * interestPerSecond;
+        return interest;
+    }
 }

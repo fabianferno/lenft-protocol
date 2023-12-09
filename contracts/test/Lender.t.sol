@@ -6,13 +6,13 @@ import {Lender} from "../src/Lender.sol";
 import {TestERC20} from "../src/test/TestERC20.sol";
 import {Famcnft} from "../src/Famcnft.sol";
 import {IERC721Receiver} from "../src/test/IERC721Receiver.sol";
-// error ERC20InvalidSender(address sender);
 
 
 contract LenderTest is Test, IERC721Receiver {
     Lender public lender;
     TestERC20 public fhdToken;
     Famcnft public famcnft; // FastApeMotoClub, our ERC721
+    event InterestCalculation(uint256 amount, uint256 interest);
 
     function setUp() public {
         fhdToken = new TestERC20(987678);
@@ -71,6 +71,22 @@ contract LenderTest is Test, IERC721Receiver {
             address(famcnft), 0, 6, 5, 4
         );
         Lender.Offer[] memory offer = lender.getOffersByNft(address(famcnft), 0);
+        assertEq(offer.length, 2);
+    }
+
+    function test_getInterest() public {
+        lender.createOffer(
+            address(famcnft), 
+            0, 
+            3, // In BPS. 0.03% interest
+            2, // duration in secods
+            1  // amount of FHD in wei
+        );
+        lender.createOffer(
+            address(famcnft), 0, 6, 5, 4
+        );
+        uint256 interest = lender.getInterest(1, block.timestamp + 1000);
+        emit InterestCalculation(1, interest);
     }
 
     function onERC721Received(
