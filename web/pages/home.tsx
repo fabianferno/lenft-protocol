@@ -58,7 +58,7 @@ export default function HomePage() {
               onClick={() => {}}
               className="mt-2 w-full text-center px-4 py-2 border border-transparent text-lg font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700"
             >
-              Step 2: View NFT offers to lend
+              View NFT offers to lend
             </button>
           </div>
         </div>

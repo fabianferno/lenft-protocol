@@ -38,7 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <WagmiConfig config={wagmiConfig}>
       <RainbowKitProvider
         theme={lightTheme({
-          accentColor: "#4f46e5",
+          accentColor: "#089bbc",
           accentColorForeground: "white",
           borderRadius: "medium",
           fontStack: "system",

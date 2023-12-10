@@ -1,3 +1,5 @@
+`use client`;
+
 import Layout from "../components/layout";
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -80,7 +82,7 @@ export default function MyNFTs() {
 
                       <div className="mt-4 p-3">
                         <label>
-                          Interest Rate:
+                          Interest Rate in basis points:
                           <input
                             type="text"
                             name="interestRate"
@@ -94,7 +96,7 @@ export default function MyNFTs() {
                         </label>
                         <br />
                         <label>
-                          Duration:
+                          Duration in secs:
                           <input
                             type="text"
                             name="duration"
@@ -108,7 +110,7 @@ export default function MyNFTs() {
                         </label>
                         <br />
                         <label>
-                          Amount:
+                          Amount in FXD:
                           <input
                             type="text"
                             name="amount"
