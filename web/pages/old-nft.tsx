@@ -1,8 +1,6 @@
 import Image from "next/image";
-import { usePublicClient } from "wagmi";
-
 import Link from "next/link";
-import { useAccount, useContractWrite } from "wagmi";
+import { useAccount } from "wagmi";
 import Layout from "@/components/layout";
 import { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
@@ -11,111 +9,47 @@ import {
   ExclamationTriangleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { NFT, LENDER } from "@/utils/constants";
+import axios from "axios";
 
-function ApproveButton() {
-  const {
-    data,
-    isLoading,
-    isSuccess,
-    write: approve,
-  } = useContractWrite({
-    address: NFT.contract,
-    abi: NFT.abi,
-    functionName: "approve",
-  });
-
-  return (
-    <div className="mt-8 flex justify-center items-center">
-      <button
-        onClick={() =>
-          approve({ args: [LENDER.contract, 1000000000000000000] })
-        }
-        type="button"
-        className="flex items-center rounded-lg w-full bg-sky-600 px-10 py-5 text-2xl text-center  font-semibold text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-black disabled:bg-slate-500 disabled:hover:text-gray-100"
-      >
-        Approve your NFT
-      </button>
-    </div>
-  );
-}
-
-function ListNFTButton() {
-  const {
-    data,
-    isLoading,
-    isSuccess,
-    write: listNft,
-  } = useContractWrite({
-    address: LENDER.contract,
-    abi: LENDER.abi,
-    functionName: "listNft",
-  });
-
-  return (
-    <div className="mt-2 flex justify-center items-center">
-      <button
-        type="button"
-        className="flex items-center rounded-lg w-full bg-sky-600 px-10 py-5 text-2xl text-center  font-semibold text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-black disabled:bg-slate-500 disabled:hover:text-gray-100"
-      >
-        Get this NFT listed
-      </button>
-    </div>
-  );
-}
-
-function LoanRepayButton() {
-  const {
-    data,
-    isLoading,
-    isSuccess,
-    write: listNft,
-  } = useContractWrite({
-    address: LENDER.contract,
-    abi: LENDER.abi,
-    functionName: "repayLoan",
-  });
-
-  return (
-    <div className="mt-2 flex justify-center items-center">
-      <button
-        type="button"
-        className="flex items-center rounded-lg w-full bg-sky-600 px-10 py-5 text-2xl text-center  font-semibold text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-black disabled:bg-slate-500 disabled:hover:text-gray-100"
-      >
-        Pay back your loan
-      </button>
-    </div>
-  );
-}
-
-function AcceptOfferButton() {
-  return (
-    <div className="mt-2 flex justify-center items-center">
-      <button
-        type="button"
-        className="text-md text-center text-white bg-sky-500 p-3 rounded-lg"
-      >
-        Accept Offer
-      </button>
-    </div>
-  );
-}
 export default function NFT() {
+  const { address } = useAccount();
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
   const [collection, setCollection] = useState<any>(null);
   const [milestoneData, setMilestoneData] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  let wallet = "0xc0f184cc590ef2e414675e03e80ed32f312b57e9";
   let Contract = router.query.Contract;
   let Id = router.query.Id;
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (Contract && Id) {
+      axios
+        .get(
+          `https://xdsea.com/api/v1/front/nft/info?TabName=All&limit=4&Owner=${wallet}&page=1&from=info&Contract=${Contract}&Id=${Id}&MyAdd=`
+        )
+        .then((res) => {
+          setCollection(res.data);
+          console.log(res.data);
+          setLoading(false);
+        })
+        .catch((err: any) => {
+          console.log(err);
+        });
+    }
+  }, []);
 
   return (
     <Layout
-      pageTitle={loading ? "Loading..." : "FastApeMotoClub" + " - #" + Id}
+      pageTitle={
+        loading
+          ? "Loading..."
+          : collection?.token?.data[0]?.CollectionName +
+            " - #" +
+            collection?.token?.data[0]?.NFTId
+      }
     >
       {/* Step 1 Panel Start */}
       {!loading ? (
@@ -125,13 +59,13 @@ export default function NFT() {
               <div>
                 <picture>
                   <source
-                    srcSet={`https://api.decentraland.org/v2/parcels/0/${Id}/map.png?size=24&width=1024&height=1024`}
+                    srcSet={collection?.token.data[0].NFTOrginalImage}
                     type="image/*"
                   />
                   <img
                     className="w-full h-auto rounded-2xl"
                     loading="lazy"
-                    src={`https://api.decentraland.org/v2/parcels/0/${Id}/map.png?size=24&width=1024&height=1024`}
+                    src={collection?.token?.data[0]?.NFTOrginalImage}
                     alt="image"
                   />
                 </picture>
@@ -142,14 +76,14 @@ export default function NFT() {
                   htmlFor="email"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  {"FastApeMotoClub"}
+                  {collection?.token?.data[0]?.NFTName}
                 </label>
                 <div className="mt-2">
                   <p
                     defaultValue=""
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200 sm:text-sm sm:leading-6"
                   >
-                    Token Id: {Id}
+                    {collection?.token?.data[0]?.NFTId}
                   </p>
                 </div>
               </div>
@@ -162,9 +96,10 @@ export default function NFT() {
                 </label>
                 <div className="mt-2">
                   <input
-                    defaultValue={Contract}
+                    defaultValue=""
                     disabled
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200 sm:text-sm sm:leading-6"
+                    placeholder={collection.token.data[0].ContractAddress}
                   />
                 </div>
               </div>
@@ -176,21 +111,22 @@ export default function NFT() {
                   <div className="flex items-center gap-x-3">
                     <picture>
                       <source
-                        srcSet={`https://api.decentraland.org/v2/parcels/0/${Id}/map.png?size=24&width=1024&height=1024`}
+                        srcSet={collection?.token?.data[0]?.NFTOrginalImage}
                         type="image/*"
                       />
                       <img
                         className="w-12 h-auto"
                         loading="lazy"
                         src={
-                          "https://api.decentraland.org/v2/parcels/0/${Id}/map.png?size=24&width=1024&height=1024`}"
+                          collection?.token?.data[0]?.NFTOrginalImage ||
+                          "https://via.placeholder.com/150"
                         }
                         // fallback
                         alt="image"
                       />
                     </picture>
                     <Link href="#" passHref={true}>
-                      FastApeMotoClub
+                      {collection?.token?.data[0]?.CollectionName}
                     </Link>
                   </div>
                 </div>
@@ -202,16 +138,13 @@ export default function NFT() {
                     type="button"
                     className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                   >
-                    XRC 721
+                    XRC {collection?.token?.data[0]?.ContractType}
                   </button>
                 </div>
               </div>
               <div className="mt-8">
                 <p className="text-gray-600 text-sm">
-                  MARKETPLACE BUILDER DOCS PLACES EVENTS DAO BLOG Decentraland
-                  Make new friends, explore diverse events, and spark your
-                  creativity in a virtual world built and owned by its
-                  community. SDK 7 The l...
+                  {collection?.token?.data[0]?.NFTDescription}
                 </p>
               </div>
 
@@ -230,7 +163,9 @@ export default function NFT() {
               <div className="mt-5">
                 <p className="text-gray-600 text-sm">
                   Creator:{" "}
-                  {JSON.stringify("0xaF776906a6C7AD0df9260ece23a3981C4E8e7e6b")}
+                  {JSON.stringify(
+                    collection?.token?.data[0]?.Creator_WalletAddress
+                  )}
                 </p>
               </div>
 
@@ -238,8 +173,15 @@ export default function NFT() {
                 <div className="px-4 py-5 sm:p-6 sm:py-14">
                   <div className="mt-2 w-full pt-0.5 bg-gray-300" />
                   <div className="mt-3 relative flex items-start justify-between">
-                    <div className="text-3xl  leading-6 font-bold text-gray-300">
-                      {10} XDC
+                    <div className="text-3xl  leading-6 font-bold text-gray-900">
+                      {
+                        collection?.token?.data[0]?.tokenowners_list[0]
+                          ?.NFTPrice
+                      }{" "}
+                      {
+                        collection?.token?.data[0]?.tokenowners_list[0]
+                          ?.CoinName
+                      }
                     </div>
                     <div className="h-6 text-sky-600 text-sm">
                       Last updated price
@@ -249,9 +191,14 @@ export default function NFT() {
               </div>
 
               {/* Claim Funds Button */}
-              <ApproveButton />
-              <ListNFTButton />
-              <LoanRepayButton />
+              <div className="mt-8 flex justify-center items-center">
+                <button
+                  type="button"
+                  className="flex items-center rounded-lg w-full bg-sky-600 px-10 py-5 text-2xl text-center  font-semibold text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-black disabled:bg-slate-500 disabled:hover:text-gray-100"
+                >
+                  Get a loan against your NFT
+                </button>
+              </div>
             </div>
           </div>
 
@@ -299,7 +246,27 @@ export default function NFT() {
                     <div className="text-sm text-gray-900">1000 XDC / 18%</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <AcceptOfferButton />
+                    <div className="text-md text-center text-white bg-sky-500 p-3 rounded-lg">
+                      Accept Offer
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">
+                      0xa9shdapsnapuijsnauisnbnausixaji
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">100 days</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">1000 XDC / 18%</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-md text-center text-white bg-sky-500 p-3 rounded-lg">
+                      Accept Offer
+                    </div>
                   </td>
                 </tr>
               </tbody>
