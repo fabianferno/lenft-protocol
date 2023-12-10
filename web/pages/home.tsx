@@ -1,7 +1,10 @@
 import Image from "next/image";
 import Layout from "@/components/layout";
-
+import { useAccount } from "wagmi";
+import { ApproveButton } from "@/components/ApproveButton";
 export default function HomePage() {
+  const { address } = useAccount();
+
   return (
     <Layout pageTitle="Home">
       <div className="">
@@ -42,7 +45,7 @@ export default function HomePage() {
       <div className="mt-5 xl:mt-12 grid grid-cols-2">
         <div className="bg-zinc-200 p-10 m-2 rounded-2xl">
           <h2 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-            Create New Quests
+            Follow these steps to get started
           </h2>
 
           <p className="mt-4 mb-1 text-md leading-6 text-gray-500">
@@ -50,17 +53,12 @@ export default function HomePage() {
           </p>
 
           <div className="grid grid-cols-1 items-end mt-12 pt-12">
-            <button
-              onClick={() => {}}
-              className="w-full text-center px-4 py-2 border border-transparent text-lg font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700"
-            >
-              Manage quests
-            </button>
+            <ApproveButton user={address} amount={100} />
             <button
               onClick={() => {}}
               className="mt-2 w-full text-center px-4 py-2 border border-transparent text-lg font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700"
             >
-              Create a quest
+              View NFT offers to lend
             </button>
           </div>
         </div>
