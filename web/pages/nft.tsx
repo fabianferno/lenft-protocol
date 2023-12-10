@@ -100,7 +100,7 @@ function AcceptOfferButton() {
     </div>
   );
 }
-export default function NFT() {
+export default function NFTPage() {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);

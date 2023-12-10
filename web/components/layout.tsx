@@ -19,14 +19,14 @@ import Head from "next/head";
 const navigation = [
   { name: "Home", href: "/home", icon: HomeIcon, current: true },
   {
-    name: "NFT",
-    href: "/nft",
-    icon: DocumentPlusIcon,
+    name: "My NFTs",
+    href: "/my-nfts",
+    icon: RocketLaunchIcon,
     current: false,
   },
   {
-    name: "My NFTs",
-    href: "/my-nfts",
+    name: "Loan Listings",
+    href: "/listings",
     icon: RocketLaunchIcon,
     current: false,
   },
