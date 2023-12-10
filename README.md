@@ -2,7 +2,7 @@
 
 Welcome fren, to the code repository of the The Lenft Protocol!
 
-https://lenftprotocol.xyz
+https://lenftprotocol.xyz (site under construction)
 
 Our technical architecture consists of two parts:
 * the backend smart contract code, which is hosted on the blockchain 
