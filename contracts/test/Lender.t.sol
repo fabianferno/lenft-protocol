@@ -10,14 +10,14 @@ import {IERC721Receiver} from "../src/test/IERC721Receiver.sol";
 
 contract LenderTest is Test, IERC721Receiver {
     Lender public lender;
-    TestERC20 public fhdToken;
+    TestERC20 public fxdToken;
     Famcnft public famcnft; // FastApeMotoClub, our ERC721
     event InterestCalculation(uint256 offerId, uint256 startTime, uint256 endTime, uint256 interest);
 
     function setUp() public {
-        fhdToken = new TestERC20(100000);
-        lender = new Lender(address(fhdToken));
-        fhdToken.approve(address(lender), 100000); // Manually in Metamask if not running via forge!
+        fxdToken = new TestERC20(100000);
+        lender = new Lender(address(fxdToken));
+        fxdToken.approve(address(lender), 100000); // Manually in Metamask if not running via forge!
         famcnft = new Famcnft();
         famcnft.setApprovalForAll(address(lender), true);       // Manually in Metamask if not running via forge!
     }
@@ -88,7 +88,7 @@ contract LenderTest is Test, IERC721Receiver {
             0, 
             3000,     // In BPS. 30% interest
             86400,    // duration in seconds
-            10000     // amount of FHD in
+            10000     // amount of FXD in
         );
         // We need to accept it for it to become a loan
         lender.acceptOffer(0);
