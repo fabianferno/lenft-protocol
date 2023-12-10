@@ -1,10 +1,10 @@
 import Image from "next/image";
-import { usePublicClient } from "wagmi";
+import { useContractRead, usePublicClient } from "wagmi";
 
 import Link from "next/link";
 import { useAccount, useContractWrite } from "wagmi";
 import Layout from "@/components/layout";
-import { Fragment, useState, useEffect } from "react";
+import { Fragment, useState, useEffect, use } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 import {
@@ -100,8 +100,84 @@ function AcceptOfferButton() {
     </div>
   );
 }
+
+function OffersTable({ contractAddress, tokenId }: any) {
+  const {
+    data: offers,
+    isError,
+    isLoading,
+  } = useContractRead({
+    address: "0x82De0603E7bB4986B8d5cF81c4620093B1D8F571", // NFT Contract
+    abi: LENDER.abi,
+    functionName: "getOffersByNft",
+    args: [contractAddress, tokenId],
+  });
+
+  useEffect(() => {
+    console.log("Offers: ", offers);
+  }, [offers]);
+
+  return (
+    <table className="min-w-full divide-y divide-gray-200">
+      <thead className="bg-gray-50">
+        <tr>
+          <th
+            scope="col"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Lender
+          </th>
+          <th
+            scope="col"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Duration
+          </th>
+          <th
+            scope="col"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Amount / Rate
+          </th>
+          <th
+            scope="col"
+            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Action
+          </th>
+        </tr>
+      </thead>
+      <tbody className="bg-white divide-y divide-gray-200">
+        <tr>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="text-sm text-gray-900">
+              0xa9shdapsnapuijsnauisnbnausixaji
+            </div>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="text-sm text-gray-900">100 days</div>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <div className="text-sm text-gray-900">1000 FXD / 18%</div>
+          </td>
+          <td className="px-6 py-4 whitespace-nowrap">
+            <AcceptOfferButton />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  );
+}
+
 export default function NFTPage() {
   const router = useRouter();
+
+  const { data, isError, isLoading } = useContractRead({
+    address: "0x82De0603E7bB4986B8d5cF81c4620093B1D8F571",
+    abi: LENDER.abi,
+    functionName: "getOffersByNft",
+    args: [router.query.Contract, router.query.Id],
+  });
 
   const [open, setOpen] = useState(false);
   const [collection, setCollection] = useState<any>(null);
@@ -239,7 +315,7 @@ export default function NFTPage() {
                   <div className="mt-2 w-full pt-0.5 bg-gray-300" />
                   <div className="mt-3 relative flex items-start justify-between">
                     <div className="text-3xl  leading-6 font-bold text-gray-300">
-                      {10} XDC
+                      {10} FXD
                     </div>
                     <div className="h-6 text-sky-600 text-sm">
                       Last updated price
@@ -255,56 +331,7 @@ export default function NFTPage() {
             </div>
           </div>
 
-          <div className="mt-5">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Lender
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Duration
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Amount / Rate
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      0xa9shdapsnapuijsnauisnbnausixaji
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">100 days</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">1000 XDC / 18%</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <AcceptOfferButton />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <div className="mt-5"></div>
         </>
       ) : (
         <div className="flex items-center justify-center h-screen">
