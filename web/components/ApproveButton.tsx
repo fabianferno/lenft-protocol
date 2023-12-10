@@ -1,5 +1,5 @@
 import { useContractWrite, useAccount } from "wagmi";
-import { FHD } from "@/utils/constants";
+import { FXD } from "@/utils/constants";
 
 export function ApproveButton({
   user,
@@ -16,8 +16,8 @@ export function ApproveButton({
     isSuccess,
     write: approve,
   } = useContractWrite({
-    address: FHD.contract,
-    abi: FHD.abi,
+    address: FXD.contract,
+    abi: FXD.abi,
     functionName: "approve",
   });
 
@@ -33,7 +33,7 @@ export function ApproveButton({
       }}
       className="w-full text-center px-4 py-2 border border-transparent text-lg font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700"
     >
-      Step 1: Approve FHD Tokens
+      Step 1: Approve FXD Tokens
     </button>
   );
 }

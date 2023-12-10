@@ -1,5 +1,5 @@
 const NFT_CONTRACT_ADDRESS: any = "0x82De0603E7bB4986B8d5cF81c4620093B1D8F571";
-const FHD_CONTRACT_ADDRESS: any = "0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96";
+const FXD_CONTRACT_ADDRESS: any = "0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96";
 const LENDER_CONTRACT_ADDRESS: any =
   "0x028830eeb2d0D8f6AB9a0059cED637dd7e18580e";
 
@@ -212,8 +212,8 @@ const LENDER: any = {
   ],
 };
 
-const FHD: any = {
-  contract: FHD_CONTRACT_ADDRESS,
+const FXD: any = {
+  contract: FXD_CONTRACT_ADDRESS,
   abi: [
     {
       type: "function",
@@ -562,4 +562,4 @@ const NFT: any = {
   ],
 };
 
-export { LENDER, FHD, NFT };
+export { LENDER, FXD, NFT };
