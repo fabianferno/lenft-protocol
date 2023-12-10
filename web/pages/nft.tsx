@@ -64,12 +64,12 @@ function ListNFTButton() {
   );
 }
 
-function LoanRepayButton() {
+function LoanRepayButton({ offerId }: any) {
   const {
     data,
     isLoading,
     isSuccess,
-    write: listNft,
+    write: repayLoan,
   } = useContractWrite({
     address: LENDER.contract,
     abi: LENDER.abi,
@@ -77,10 +77,14 @@ function LoanRepayButton() {
   });
 
   return (
-    <div className="mt-2 flex justify-center items-center">
+    <div className="mt-2 mx-2 flex justify-center items-center">
       <button
+        onClick={() => {
+          console.log("Repaying loan...");
+          repayLoan();
+        }}
+        className="text-md text-center text-white bg-sky-500 p-3 rounded-lg"
         type="button"
-        className="flex items-center rounded-lg w-full bg-sky-600 px-10 py-5 text-2xl text-center  font-semibold text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 hover:text-black disabled:bg-slate-500 disabled:hover:text-gray-100"
       >
         Pay back your loan
       </button>
@@ -88,14 +92,29 @@ function LoanRepayButton() {
   );
 }
 
-function AcceptOfferButton() {
+function AcceptOfferButton({ offerId }: any) {
+  const {
+    data,
+    isLoading,
+    isSuccess,
+    write: acceptOffer,
+  } = useContractWrite({
+    address: LENDER.contract,
+    abi: LENDER.abi,
+    functionName: "acceptOffer",
+  });
+
   return (
     <div className="mt-2 flex justify-center items-center">
       <button
+        onClick={() => {
+          console.log("Accepting offer...");
+          acceptOffer({ args: [offerId] });
+        }}
         type="button"
         className="text-md text-center text-white bg-sky-500 p-3 rounded-lg"
       >
-        Accept Offer
+        Accept Offer #{offerId} {isSuccess && "Success!"}
       </button>
     </div>
   );
@@ -107,7 +126,7 @@ function OffersTable({ contractAddress, tokenId }: any) {
     isError,
     isLoading,
   } = useContractRead({
-    address: "0x82De0603E7bB4986B8d5cF81c4620093B1D8F571", // NFT Contract
+    address: LENDER.contract,
     abi: LENDER.abi,
     functionName: "getOffersByNft",
     args: [contractAddress, tokenId],
@@ -148,22 +167,35 @@ function OffersTable({ contractAddress, tokenId }: any) {
         </tr>
       </thead>
       <tbody className="bg-white divide-y divide-gray-200">
-        <tr>
-          <td className="px-6 py-4 whitespace-nowrap">
-            <div className="text-sm text-gray-900">
-              0xa9shdapsnapuijsnauisnbnausixaji
-            </div>
-          </td>
-          <td className="px-6 py-4 whitespace-nowrap">
-            <div className="text-sm text-gray-900">100 days</div>
-          </td>
-          <td className="px-6 py-4 whitespace-nowrap">
-            <div className="text-sm text-gray-900">1000 FXD / 18%</div>
-          </td>
-          <td className="px-6 py-4 whitespace-nowrap">
-            <AcceptOfferButton />
-          </td>
-        </tr>
+        {isLoading ? (
+          "Loading..."
+        ) : (
+          <Fragment>
+            {offers?.map((offer: any, index) => {
+              return (
+                <tr key={index}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{offer?.lender}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">
+                      {parseInt(offer?.duration)} days
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">
+                      {parseInt(offer?.amount)} FXD
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap flex">
+                    <AcceptOfferButton offerId={index} />
+                    <LoanRepayButton offerId={index} />
+                  </td>
+                </tr>
+              );
+            })}
+          </Fragment>
+        )}
       </tbody>
     </table>
   );
@@ -172,16 +204,8 @@ function OffersTable({ contractAddress, tokenId }: any) {
 export default function NFTPage() {
   const router = useRouter();
 
-  const { data, isError, isLoading } = useContractRead({
-    address: "0x82De0603E7bB4986B8d5cF81c4620093B1D8F571",
-    abi: LENDER.abi,
-    functionName: "getOffersByNft",
-    args: [router.query.Contract, router.query.Id],
-  });
-
   const [open, setOpen] = useState(false);
   const [collection, setCollection] = useState<any>(null);
-  const [milestoneData, setMilestoneData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
   let Contract = router.query.Contract;
@@ -327,11 +351,12 @@ export default function NFTPage() {
               {/* Claim Funds Button */}
               <ApproveButton />
               <ListNFTButton />
-              <LoanRepayButton />
             </div>
           </div>
 
-          <div className="mt-5"></div>
+          <div className="mt-5">
+            <OffersTable contractAddress={Contract} tokenId={Id} />
+          </div>
         </>
       ) : (
         <div className="flex items-center justify-center h-screen">
