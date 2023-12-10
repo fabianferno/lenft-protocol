@@ -31,6 +31,7 @@ function CreateOfferButton({
   return (
     <button
       onClick={() => {
+        console.log("Creating offer...");
         createOffer();
       }}
       className="mt-5 w-full text-center px-4 py-2 border border-transparent text-lg font-medium rounded-md shadow-sm text-white bg-sky-600 hover:bg-sky-700"
