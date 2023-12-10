@@ -6,38 +6,18 @@ pragma solidity ^0.8.19;
 
 import "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import "openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
+import {ILender} from "./ILender.sol";
 
-contract Lender {
-
-    struct Offer {
-        address nftContract;
-        uint256 tokenId;
-        address lender;
-        address borrower;
-        uint256 interestRate; // Should be in basis points. 1% = 100
-        uint256 duration;     // In seconds
-        uint256 amount;       // In FHD
-        uint256 startTime;    // Unix timestamp in seconds
-        uint256 endTime;      // Unix timestamp in seconds
-        bool active;
-    }
+contract Lender is ILender {
 
     // The token the loans have to be in Fathom Dollar (FHD)
     // https://charts.fathom.fi/#/token/0x49d3f7543335cf38fa10889ccff10207e22110b5
     // mainnet: 0x49d3f7543335cf38fa10889ccff10207e22110b5
     // testnet: 0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96
-
-    struct NFT {
-        address nftContract;
-        uint256 tokenId;
-        bool listed;
-    }
-    NFT[] public listedNfts;
-
     address public token = 0xDf29cB40Cb92a1b8E8337F542E3846E185DefF96;
 
+    NFT[] public listedNfts;
     uint256 public lastOfferId;
-
     mapping(uint256 => Offer) public offers;
     mapping(address => mapping (uint256 => Offer[])) public offersByNft;
     
@@ -78,7 +58,7 @@ contract Lender {
         return offerId;
     }
 
-    function listNft(address _nftContract, uint256 _tokenId) public {
+    function listNft(address _nftContract, uint256 _tokenId) external {
         require(IERC721(_nftContract).ownerOf(_tokenId) == msg.sender, "You do not own this NFT");
         listedNfts.push(NFT({
             nftContract: _nftContract,
